@@ -14,7 +14,8 @@ using namespace std;
 
 int main() {
 
-    const int MAX = 5;
+    const int MAX = 100;
+    const int MAX_MOVIMENTACOES = 500;
 
     int numeroConta[MAX];
     string nomeCliente[MAX];
@@ -23,7 +24,13 @@ int main() {
     double saldo[MAX];
     bool contaAtiva[MAX];
 
+    int contaMovimentacao[MAX_MOVIMENTACOES];
+    char tipoMovimentacao[MAX_MOVIMENTACOES];
+    double valorMovimentacao[MAX_MOVIMENTACOES];
+
     int quantidadeContas = 0;
+    int quantidadeMovimentacoes = 0;
+
     int opcao;
     int contaProcurada;
     int posicao;
@@ -31,14 +38,19 @@ int main() {
     do {
 
         cout << "\n==============================" << endl;
-        cout << "          BANCO INF101" << endl;
+        cout << "       BANCO DO JOÃO" << endl;
         cout << "==============================" << endl;
         cout << "1 - Cadastrar conta" << endl;
         cout << "2 - Consultar conta" << endl;
         cout << "3 - Verificar saldo" << endl;
         cout << "4 - Alterar tipo da conta" << endl;
         cout << "5 - Ativar/Desativar conta" << endl;
-        cout << "6 - Sair" << endl;
+        cout << "6 - Listar contas" << endl;
+        cout << "7 - Realizar deposito" << endl;
+        cout << "8 - Realizar saque" << endl;
+        cout << "9 - Realizar transferencia" << endl;
+        cout << "10 - Exibir extrato" << endl;
+        cout << "11 - Sair" << endl;
 
         cout << "\nEscolha uma opcao: ";
         cin >> opcao;
@@ -48,7 +60,7 @@ int main() {
         case 1:
 
             if (quantidadeContas >= MAX) {
-                cout << "\nLimite de 5 contas atingido!" << endl;
+                cout << "\nLimite de 100 contas atingido!" << endl;
                 break;
             }
 
@@ -272,6 +284,316 @@ int main() {
 
         case 6:
 
+            if (quantidadeContas == 0) {
+
+                cout << "\nNenhuma conta cadastrada!" << endl;
+
+            } else {
+
+                cout << "\n======= CONTAS CADASTRADAS =======" << endl;
+
+                for (int i = 0; i < quantidadeContas; i++) {
+
+                    cout << "\nNumero: " << numeroConta[i] << endl;
+                    cout << "Cliente: " << nomeCliente[i] << endl;
+                    cout << "Saldo: R$ " << saldo[i] << endl;
+
+                    if (tipoConta[i] == 1) {
+                        cout << "Tipo: Corrente" << endl;
+                    } else {
+                        cout << "Tipo: Poupanca" << endl;
+                    }
+
+                    if (contaAtiva[i] == true) {
+                        cout << "Situacao: Ativa" << endl;
+                    } else {
+                        cout << "Situacao: Inativa" << endl;
+                    }
+                }
+            }
+
+            break;
+
+
+        case 7:
+
+            cout << "\nDigite o numero da conta: ";
+            cin >> contaProcurada;
+
+            posicao = -1;
+
+            for (int i = 0; i < quantidadeContas; i++) {
+
+                if (numeroConta[i] == contaProcurada) {
+                    posicao = i;
+                    break;
+                }
+            }
+
+            if (posicao == -1) {
+
+                cout << "\nConta nao encontrada!" << endl;
+
+            } else if (contaAtiva[posicao] == false) {
+
+                cout << "\nA conta esta desativada!" << endl;
+
+            } else if (quantidadeMovimentacoes >= MAX_MOVIMENTACOES) {
+
+                cout << "\nLimite de movimentacoes atingido!" << endl;
+
+            } else {
+
+                double valor;
+
+                cout << "Digite o valor do deposito: R$ ";
+                cin >> valor;
+
+                if (valor <= 0) {
+
+                    cout << "\nValor invalido!" << endl;
+
+                } else {
+
+                    saldo[posicao] = saldo[posicao] + valor;
+
+                    contaMovimentacao[quantidadeMovimentacoes] =
+                        numeroConta[posicao];
+
+                    tipoMovimentacao[quantidadeMovimentacoes] = 'D';
+
+                    valorMovimentacao[quantidadeMovimentacoes] = valor;
+
+                    quantidadeMovimentacoes++;
+
+                    cout << "\nDeposito realizado com sucesso!" << endl;
+                    cout << "Novo saldo: R$ " << saldo[posicao] << endl;
+                }
+            }
+
+            break;
+
+
+        case 8:
+
+            cout << "\nDigite o numero da conta: ";
+            cin >> contaProcurada;
+
+            posicao = -1;
+
+            for (int i = 0; i < quantidadeContas; i++) {
+
+                if (numeroConta[i] == contaProcurada) {
+                    posicao = i;
+                    break;
+                }
+            }
+
+            if (posicao == -1) {
+
+                cout << "\nConta nao encontrada!" << endl;
+
+            } else if (contaAtiva[posicao] == false) {
+
+                cout << "\nA conta esta desativada!" << endl;
+
+            } else if (quantidadeMovimentacoes >= MAX_MOVIMENTACOES) {
+
+                cout << "\nLimite de movimentacoes atingido!" << endl;
+
+            } else {
+
+                double valor;
+
+                cout << "Digite o valor do saque: R$ ";
+                cin >> valor;
+
+                if (valor <= 0) {
+
+                    cout << "\nValor invalido!" << endl;
+
+                } else if (valor > saldo[posicao]) {
+
+                    cout << "\nSaldo insuficiente!" << endl;
+
+                } else {
+
+                    saldo[posicao] = saldo[posicao] - valor;
+
+                    contaMovimentacao[quantidadeMovimentacoes] =
+                        numeroConta[posicao];
+
+                    tipoMovimentacao[quantidadeMovimentacoes] = 'S';
+
+                    valorMovimentacao[quantidadeMovimentacoes] = valor;
+
+                    quantidadeMovimentacoes++;
+
+                    cout << "\nSaque realizado com sucesso!" << endl;
+                    cout << "Novo saldo: R$ " << saldo[posicao] << endl;
+                }
+            }
+
+            break;
+
+
+        case 9:
+
+            {
+                int contaOrigem;
+                int contaDestino;
+                int indiceOrigem = -1;
+                int indiceDestino = -1;
+                double valor;
+
+                cout << "\nConta de origem: ";
+                cin >> contaOrigem;
+
+                cout << "Conta de destino: ";
+                cin >> contaDestino;
+
+                for (int i = 0; i < quantidadeContas; i++) {
+
+                    if (numeroConta[i] == contaOrigem) {
+                        indiceOrigem = i;
+                    }
+
+                    if (numeroConta[i] == contaDestino) {
+                        indiceDestino = i;
+                    }
+                }
+
+                if (indiceOrigem == -1 || indiceDestino == -1) {
+
+                    cout << "\nUma das contas nao foi encontrada!" << endl;
+
+                } else if (indiceOrigem == indiceDestino) {
+
+                    cout << "\nNao e possivel transferir para a mesma conta!" << endl;
+
+                } else if (contaAtiva[indiceOrigem] == false ||
+                           contaAtiva[indiceDestino] == false) {
+
+                    cout << "\nAs duas contas precisam estar ativas!" << endl;
+
+                } else if (quantidadeMovimentacoes + 2 > MAX_MOVIMENTACOES) {
+
+                    cout << "\nNao ha espaco para registrar a transferencia!" << endl;
+
+                } else {
+
+                    cout << "Digite o valor da transferencia: R$ ";
+                    cin >> valor;
+
+                    if (valor <= 0) {
+
+                        cout << "\nValor invalido!" << endl;
+
+                    } else if (valor > saldo[indiceOrigem]) {
+
+                        cout << "\nSaldo insuficiente!" << endl;
+
+                    } else {
+
+                        saldo[indiceOrigem] =
+                            saldo[indiceOrigem] - valor;
+
+                        saldo[indiceDestino] =
+                            saldo[indiceDestino] + valor;
+
+
+                        contaMovimentacao[quantidadeMovimentacoes] =
+                            numeroConta[indiceOrigem];
+
+                        tipoMovimentacao[quantidadeMovimentacoes] = 'S';
+
+                        valorMovimentacao[quantidadeMovimentacoes] = valor;
+
+
+                        contaMovimentacao[quantidadeMovimentacoes + 1] =
+                            numeroConta[indiceDestino];
+
+                        tipoMovimentacao[quantidadeMovimentacoes + 1] = 'D';
+
+                        valorMovimentacao[quantidadeMovimentacoes + 1] = valor;
+
+
+                        quantidadeMovimentacoes += 2;
+
+                        cout << "\nTransferencia realizada com sucesso!" << endl;
+
+                        cout << "Saldo da conta de origem: R$ "
+                             << saldo[indiceOrigem] << endl;
+
+                        cout << "Saldo da conta de destino: R$ "
+                             << saldo[indiceDestino] << endl;
+                    }
+                }
+            }
+
+            break;
+
+
+        case 10:
+
+            cout << "\nDigite o numero da conta: ";
+            cin >> contaProcurada;
+
+            posicao = -1;
+
+            for (int i = 0; i < quantidadeContas; i++) {
+
+                if (numeroConta[i] == contaProcurada) {
+                    posicao = i;
+                    break;
+                }
+            }
+
+            if (posicao == -1) {
+
+                cout << "\nConta nao encontrada!" << endl;
+
+            } else {
+
+                cout << "\n========== EXTRATO ==========" << endl;
+                cout << "Conta: " << numeroConta[posicao] << endl;
+                cout << "Cliente: " << nomeCliente[posicao] << endl;
+
+                bool encontrouMovimentacao = false;
+
+                for (int i = 0; i < quantidadeMovimentacoes; i++) {
+
+                    if (contaMovimentacao[i] == contaProcurada) {
+
+                        encontrouMovimentacao = true;
+
+                        if (tipoMovimentacao[i] == 'D') {
+
+                            cout << "Deposito/Entrada: R$ "
+                                 << valorMovimentacao[i] << endl;
+
+                        } else if (tipoMovimentacao[i] == 'S') {
+
+                            cout << "Saque/Saida: R$ "
+                                 << valorMovimentacao[i] << endl;
+                        }
+                    }
+                }
+
+                if (encontrouMovimentacao == false) {
+
+                    cout << "\nNenhuma movimentacao registrada!" << endl;
+                }
+
+                cout << "Saldo atual: R$ " << saldo[posicao] << endl;
+                cout << "=============================" << endl;
+            }
+
+            break;
+
+
+        case 11:
+
             cout << "\nSistema encerrado." << endl;
             break;
 
@@ -282,7 +604,7 @@ int main() {
         }
 
 
-        if (opcao != 6) {
+        if (opcao != 11) {
 
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -291,7 +613,7 @@ int main() {
             cin.get();
         }
 
-    } while (opcao != 6);
+    } while (opcao != 11);
 
 
     return 0;
